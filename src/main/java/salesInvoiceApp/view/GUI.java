@@ -243,15 +243,15 @@ public class GUI extends javax.swing.JFrame {
 
     private void createNewInvoiceBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createNewInvoiceBTNActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_createNewInvoiceBTNActionPerformed
+    }
 
     private void deleteInvoiceBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteInvoiceBTNActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_deleteInvoiceBTNActionPerformed
+    }
 
     private void loadFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileMenuItemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_loadFileMenuItemActionPerformed
+    }
 
     /**
      * @param args the command line arguments
@@ -350,7 +350,7 @@ public class GUI extends javax.swing.JFrame {
         int returned = 0;
         invoicesArrayList = getInvoicesArrayList();
         for (Invoice invoice : invoicesArrayList){
-            int num = invoice.getNum();
+            int num = invoice.getNum()+1;
             if (num > returned){
                 returned = num;
             }

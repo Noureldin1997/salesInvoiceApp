@@ -90,22 +90,137 @@ public class Controller implements ActionListener, ListSelectionListener {
     }
 
     private void createInvoiceOK() {
-        String date = invoiceDialog.getDate();
+        String date = invoiceDialog.getDate().getText();
         String customerName = invoiceDialog.getCustomerName().getText();
-        int num = frame.getNextInvoiceNumber()+1;
+        int num = frame.getNextInvoiceNumber();
 
-        Invoice invoice = new Invoice(num,customerName,date);
-        frame.getInvoicesArrayList().add(invoice);
-        frame.getInvoiceTable().fireTableDataChanged();
+        try {
+            String[] dateSplitted = date.split("-");
+            if(dateSplitted.length != 3){
+                JOptionPane.showMessageDialog(frame, "Wrong Date Format", "Error", JOptionPane.ERROR_MESSAGE);
+            }else {
+                int year = Integer.parseInt(dateSplitted[2]);
+                int month = Integer.parseInt(dateSplitted[1]);
+                if (month<1 || month >12){
+                    JOptionPane.showMessageDialog(frame, "months are only valid between 1 and 12", "Error", JOptionPane.ERROR_MESSAGE);
+                }else {
+                    int maxDayFeb = 0;
+                    int day = Integer.parseInt(dateSplitted[0]);
+                    boolean generate = true;
+                    switch (month){
+                        case 1:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "January days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 2:
+                            if(year%4 == 0){
+                                if(year%100 == 0){
+                                    if(year%400 == 0){
+                                        maxDayFeb = 29;
+                                    }else{
+                                        maxDayFeb = 28;
+                                    }
+                                }else{
+                                    maxDayFeb = 29;
+                                }
+                            }else{
+                                maxDayFeb = 28;
+                            }
+                            if (day < 1 || day > maxDayFeb){
+                                generate = false;
+                                if (maxDayFeb == 29){
+                                    JOptionPane.showMessageDialog(frame, "February days must be between 1 and 29 in leap years like "+ year, "Error", JOptionPane.ERROR_MESSAGE);
 
-        //finalizing..
-        invoiceDialog.setVisible(false);
-        invoiceDialog.dispose();
-        invoiceDialog = null;
-        frame.getInvoiceDateValue().setText("");
-        frame.getInvoiceTotalValue().setText("");
-        frame.getCustomerNameValue().setText("");
-        frame.getInvoiceNumberValue().setText("");
+                                }else if (maxDayFeb == 28){
+                                    JOptionPane.showMessageDialog(frame, "February days must be between 1 and 28 in common years like "+ year, "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                            break;
+                        case 3:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "March days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 4:
+                            if(day < 1 || day > 30) {
+                                JOptionPane.showMessageDialog(frame, "April days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 5:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "May days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 6:
+                            if(day < 1 || day > 30) {
+                                JOptionPane.showMessageDialog(frame, "June days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 7:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "July days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 8:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "August days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 9:
+                            if(day < 1 || day > 30) {
+                                JOptionPane.showMessageDialog(frame, "September days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 10:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "October days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 11:
+                            if(day < 1 || day > 30) {
+                                JOptionPane.showMessageDialog(frame, "November days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        case 12:
+                            if(day < 1 || day > 31) {
+                                JOptionPane.showMessageDialog(frame, "December days must be between 1 and 31", "Error", JOptionPane.ERROR_MESSAGE);
+                                generate = false;
+                            }
+                            break;
+                        default:
+                            generate = true;
+
+                    }
+
+                    if(generate == true){
+                        Invoice invoice = new Invoice(num, customerName, date);
+                        frame.getInvoicesArrayList().add(invoice);
+                        frame.getInvoiceTable().fireTableDataChanged();
+                    }
+                    //finalizing..
+                    invoiceDialog.setVisible(false);
+                    invoiceDialog.dispose();
+                    invoiceDialog = null;
+                    frame.getInvoiceDateValue().setText("");
+                    frame.getInvoiceTotalValue().setText("");
+                    frame.getCustomerNameValue().setText("");
+                    frame.getInvoiceNumberValue().setText("");
+                }
+            }
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(frame, "Wrong date input, insert numbers only", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void createInvoiceCancel() {
@@ -150,51 +265,75 @@ public class Controller implements ActionListener, ListSelectionListener {
     }
 
     private void loadFile() {
-        JFileChooser f = new JFileChooser();
+        JFileChooser f = new JFileChooser("././InvoiceHeader.csv");
         try {
             int res = f.showOpenDialog(null);
             if (res == JFileChooser.APPROVE_OPTION) {
                 File file_header = f.getSelectedFile();
                 Path path_header = Paths.get(file_header.getAbsolutePath());
-                List<String> lines_header = Files.readAllLines(path_header);
-                ArrayList<Invoice> invoicesArray = new ArrayList<>();
-                for (String line_header : lines_header){
-                    String[] headerSplitted = line_header.split(",");
-                    int invoiceNumber = Integer.parseInt(headerSplitted[0]);
-                    String invoiceDate = headerSplitted[1];
-                    String customer = headerSplitted[2];
-                    invoicesArray.add(new Invoice(invoiceNumber,customer,invoiceDate));
-                }
+                try {
+                    List<String> lines_header = Files.readAllLines(path_header);
+                    ArrayList<Invoice> invoicesArray = new ArrayList<>();
+                    try {
+                        for (String line_header : lines_header) {
+                            String[] headerSplitted = line_header.split(",");
+                            int invoiceNumber = Integer.parseInt(headerSplitted[0]);
+                            String invoiceDate = headerSplitted[1];
+                            String customer = headerSplitted[2];
+                            invoicesArray.add(new Invoice(invoiceNumber, customer, invoiceDate));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(frame, "Line format error in invoices file", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 res = f.showOpenDialog(frame);
                 if(res == JFileChooser.APPROVE_OPTION){
                     File linesFile = f.getSelectedFile();
                     Path path_lines = Paths.get(linesFile.getAbsolutePath());
-                    List<String> lines = Files.readAllLines(path_lines);
-                    for (String line : lines){
-                        String lineSplitted[] = line.split(",");
-                        int invoiceNumber = Integer.parseInt(lineSplitted[0]);
-                        String itemName = lineSplitted[1];
-                        double itemPrice = Double.parseDouble(lineSplitted[2]);
-                        int count = Integer.parseInt(lineSplitted[3]);
-                        Invoice currentInvoice = null;
-                        for (Invoice i : invoicesArray){
-                            if (i.getNum()==invoiceNumber){
-                                currentInvoice = i;
-                                break;
+                    try{
+                        List<String> lines = Files.readAllLines(path_lines);
+                        for (String line : lines){
+                            try {
+                                String lineSplitted[] = line.split(",");
+                                int invoiceNumber = Integer.parseInt(lineSplitted[0]);
+                                String itemName = lineSplitted[1];
+                                double itemPrice = Double.parseDouble(lineSplitted[2]);
+                                int count = Integer.parseInt(lineSplitted[3]);
+                                Invoice currentInvoice = null;
+                                for (Invoice i : invoicesArray) {
+                                    if (i.getNum() == invoiceNumber) {
+                                        currentInvoice = i;
+                                        break;
+                                    }
+                                }
+                                Line currentLine = new Line(invoiceNumber, count, itemPrice, itemName, currentInvoice);
+                                currentInvoice.getLines().add(currentLine);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                JOptionPane.showMessageDialog(frame, "Line format error in lines file", "ERROR", JOptionPane.ERROR_MESSAGE );
                             }
                         }
-                        Line currentLine = new Line(invoiceNumber,count,itemPrice,itemName,currentInvoice);
-                        currentInvoice.getLines().add(currentLine);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(frame, "Line file not found", "ERROR", JOptionPane.ERROR_MESSAGE );
                     }
+
+
                 }
                 frame.setInvoicesArrayList(invoicesArray);
                 invoicesTable invoice_table = new invoicesTable(invoicesArray);
                 frame.setInvoiceTable(invoice_table);
                 frame.getInvTable().setModel(invoice_table);
                 frame.getInvoiceTable().fireTableDataChanged();
+                } catch (Exception e){
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, "Invoices file not found", "ERROR", JOptionPane.ERROR_MESSAGE );
+                }
             }
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "File cannot be read", "ERROR", JOptionPane.ERROR_MESSAGE );
         }
     }
 
@@ -230,7 +369,7 @@ public class Controller implements ActionListener, ListSelectionListener {
                 }
             }
         }catch (IOException e){
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "File cannot be saved", "ERROR", JOptionPane.ERROR_MESSAGE );
         }
     }
 

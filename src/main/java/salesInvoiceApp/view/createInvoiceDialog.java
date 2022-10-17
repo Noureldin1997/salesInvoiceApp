@@ -56,8 +56,8 @@ public class createInvoiceDialog extends JDialog {
         return customerName;
     }
 
-    public String getDate() {
-        return dateString;
+    public JTextField getDate() {
+        return invoiceDate;
     }
 
 }
